@@ -23,7 +23,9 @@ class CantOpenFileException(m: String) : Exception(m)
 
 object WordList {
     private const val WORDS_LST = "./words.txt"
-//    private val WORDS_LST_ENCODING = Charset.forName("UTF-8") fn
+//    private val WORDS_LST_ENCODING = Charset.forName("UTF-8") fn // filtrueemptyArray<String>()
+
+//        if ==  || nextLine return
 
     private fun readWordList() : Array<String> {
         val resource = fopen(WORDS_LST, "r") ?: throw CantOpenFileException("File $WORDS_LST could not be opened.")
@@ -35,14 +37,12 @@ object WordList {
 
                 do {
                     val nextLine = fgets(buffer, bufferLength, resource)?.toKString()?.trim()
-                    if (nextLine == null || nextLine.isEmpty()) return lines.toTypedArray()
-                    lines.add(nextLine)
-                } while (true)
+                } while (!(nextLine?.also { lines.add(nextLine) }.isNullOrEmpty()))
             }
-            } finally {
-                fclose(resource) // fil
-            }
-        return emptyArray<String>()
+        } finally {
+            fclose(resource)
+        }
+        return lines.toTypedArray()
     }
 
     val words by lazy {
